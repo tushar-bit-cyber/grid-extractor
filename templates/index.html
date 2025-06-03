@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Dimensions Extractor</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <img src="/static/devR.jpeg" alt="devR Logo" class="logo">
+        <img src="/static/Dmicro.png" alt="Dmicro Logo" class="logo">
+        <h1>Grid Dimensions Extractor for fpocket</h1>
+        <p>Upload a pocket PDB file to generate a Vina config file.</p>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".pdb" required>
+            <button type="submit">Generate Config</button>
+        </form>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        {% if result %}
+            <h2>Results</h2>
+            <p><strong>Center:</strong> ({{ result.center_x }}, {{ result.center_y }}, {{ result.center_z }})</p>
+            <p><strong>Size:</strong> ({{ result.size_x }}, {{ result.size_y }}, {{ result.size_z }})</p>
+            {% if download %}
+                <p><a href="/download" class="download-btn">Download Config File</a></p>
+            {% endif %}
+        {% endif %}
+        {% if chart_data %}
+            <h2>Grid Size Visualization</h2>
+            <canvas id="gridChart" width="400" height="200"></canvas>
+            <script>
+                var ctx = document.getElementById('gridChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ chart_data.labels | tojson }},
+                        datasets: [{
+                            label: 'Grid Sizes',
+                            data: {{ chart_data.data | tojson }},
+                            backgroundColor: {{ chart_data.colors | tojson }},
+                            borderColor: {{ chart_data.colors | tojson }},
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Size (Å)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Dimensions'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            </script>
+        {% endif %}
+    </div>
+</body>
+</html>

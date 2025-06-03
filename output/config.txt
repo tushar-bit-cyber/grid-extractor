@@ -1,0 +1,10 @@
+# Auto-generated Vina config file
+
+center_x = 19.527
+center_y = 59.859
+center_z = 51.576
+
+size_x = 18.5
+size_y = 16.8
+size_z = 17.8
+
