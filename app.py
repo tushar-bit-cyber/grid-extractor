@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, send_file
 import os
 from generate_vina_grid import parse_pocket_pdb, write_vina_config
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 # Define directories
 UPLOAD_FOLDER = 'uploads'
@@ -51,10 +51,9 @@ def index():
                     chart_data = {
                         'labels': ['Size X', 'Size Y', 'Size Z'],
                         'data': [size[0], size[1], size[2]],
-                        'colors': ['#007bff', '#28a745', '#dc3545']  # Blue, Green, Red
+                        'colors': ['#007bff', '#28a745', '#dc3545']
                     }
 
-                    # Return template with option to download config
                     return render_template('index.html', result=result, chart_data=chart_data, error=None, download=True)
                 except Exception as e:
                     error = str(e)
@@ -69,4 +68,6 @@ def download_file():
     return "File not found", 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Use PORT environment variable if available, default to 5000
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
